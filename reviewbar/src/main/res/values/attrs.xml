@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ReviewBar">
+        <attr name="fillIcon" format="reference"/>
+        <attr name="halfIcon" format="reference"/>
+        <attr name="emptyIcon" format="reference"/>
+        <attr name="halfRangeMin" format="float"/>
+        <attr name="halfRangeMax" format="float"/>
+        <attr name="isIndicator" format="boolean"/>
+        <attr name="halfEnable" format="boolean"/>
+        <attr name="iconSpace" format="integer"/>
+        <attr name="reviewScore" format="float"/>
+        <attr name="reviewScoreMax" format="integer"/>
+    </declare-styleable>
+</resources>
