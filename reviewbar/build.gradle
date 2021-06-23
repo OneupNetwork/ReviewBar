@@ -1,6 +1,9 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'maven-publish'
+    id 'signing'
+    id 'org.jetbrains.dokka'
 }
 
 android {
@@ -10,8 +13,6 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -41,4 +42,106 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}
+
+task androidSourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    if (project.plugins.findPlugin("com.android.library")) {
+        from android.sourceSets.main.java.srcDirs
+        from android.sourceSets.main.kotlin.srcDirs
+    } else {
+        from sourceSets.main.java.srcDirs
+        from sourceSets.main.kotlin.srcDirs
+    }
+}
+
+tasks.withType(dokkaHtmlPartial.getClass()).configureEach {
+    pluginsMapConfiguration.set(
+            ["org.jetbrains.dokka.base.DokkaBase": """{ "separateInheritedMembers": true}"""]
+    )
+}
+
+task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
+    archiveClassifier.set('javadoc')
+    from dokkaJavadoc.outputDirectory
+}
+
+artifacts {
+    archives androidSourcesJar
+    archives javadocJar
+}
+
+group = 'tw.com.oneup.www'
+version '1.0.0'
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId group
+                artifactId 'reviewbar'
+                version '1.0.0'
+
+                if (project.plugins.findPlugin("com.android.library")) {
+                    from components.release
+                } else {
+                    artifact("$buildDir/libs/${project.getName()}-${version}.jar")
+                }
+
+                artifact androidSourcesJar
+                artifact javadocJar
+
+                pom {
+                    name = 'reviewbar'
+                    description = 'Custom RatingBar'
+                    url = 'https://github.com/OneupNetwork/ReviewBar'
+                    licenses {
+                        license {
+                            name = 'MIT License'
+                            url = 'https://github.com/OneupNetwork/ReviewBar/blob/main/LICENSE'
+                        }
+                    }
+                    developers {
+                        developer {
+                            name = 'Solinari'
+                            email = 'solinari@gamer.com.tw'
+                        }
+                    }
+
+                    scm {
+                        connection = 'scm:git:github.com/OneupNetwork/ReviewBar.git'
+                        developerConnection = 'scm:git:ssh://github.com/OneupNetwork/ReviewBar'
+                        url = 'https://github.com/OneupNetwork/ReviewBar'
+                    }
+                }
+            }
+        }
+        repositories {
+            maven {
+                name = "sonatype"
+
+                def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+
+                def name = findProperty('repositoryUsername') ?: ''
+                def pw = findProperty('repositoryPassword') ?: ''
+                credentials {
+                    username name
+                    password pw
+                }
+            }
+        }
+    }
+
+    signing {
+        sign publishing.publications
+    }
+}
+nexusStaging {
+    packageGroup = 'tw.com.oneup.www'
+    def name = findProperty('nexusUsername') ?: ''
+    def pw = findProperty('nexusPassword') ?: ''
+    username = name
+    password = pw
 }
