@@ -11,5 +11,6 @@
         <attr name="iconSpace" format="integer"/>
         <attr name="reviewScore" format="float"/>
         <attr name="reviewScoreMax" format="integer"/>
+        <attr name="whenDragScoreMin" format="float"/>
     </declare-styleable>
 </resources>

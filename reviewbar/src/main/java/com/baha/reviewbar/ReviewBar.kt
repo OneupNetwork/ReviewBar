@@ -33,6 +33,7 @@ class ReviewBar : LinearLayoutCompat {
     private var isIndicator = true
     private var touchDownX = 0f
     private var isDragging = false
+    private var whenDragMinScore = 0f
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -50,6 +51,7 @@ class ReviewBar : LinearLayoutCompat {
         reviewIconSpacing = typedArray.getInt(R.styleable.ReviewBar_iconSpace, 0)
         reviewScore = typedArray.getFloat(R.styleable.ReviewBar_reviewScore, 0f)
         reviewScoreMax = typedArray.getInteger(R.styleable.ReviewBar_reviewScoreMax, 5)
+        whenDragMinScore = typedArray.getFloat(R.styleable.ReviewBar_whenDragScoreMin, 0f)
         typedArray.recycle()
 
         reviewIconMap.apply {
@@ -109,12 +111,46 @@ class ReviewBar : LinearLayoutCompat {
         imageView.setImageDrawable(drawable)
     }
 
-    private fun setReviewScore(score: Float) {
-        if (this.reviewScore == score) {
+    fun setReviewIcon(fillIconRes:Int,halfIconRes:Int,emptyIconRes:Int){
+        removeAllViews()
+        reviewIconMap.apply {
+            put(ReviewIcon.FILL, ContextCompat.getDrawable(context, fillIconRes)!!)
+            put(ReviewIcon.HALF, ContextCompat.getDrawable(context, halfIconRes)!!)
+            put(ReviewIcon.EMPTY, ContextCompat.getDrawable(context, emptyIconRes)!!)
+        }
+        initView()
+    }
+
+    fun setReviewScore(score: Float, isFormDrag: Boolean = false) {
+        if (this.reviewScore == score || (isFormDrag && score < whenDragMinScore)) {
             return
         }
+
         this.reviewScore = score
         refreshReviewScore()
+    }
+
+    fun setReviewScoreMax(max:Int){
+        reviewScoreMax = max
+        removeAllViews()
+        initView()
+    }
+
+    fun setIndicatorEnable(enable: Boolean) {
+        isIndicator = enable
+    }
+
+    fun setHalfEnable(enable: Boolean) {
+        halfEnable = enable
+    }
+
+    fun setHalfMinMax(min: Float, max: Float) {
+        halfRangeMin = min
+        halfRangeMax = max
+    }
+
+    fun setWhenDragScoreMin(min: Float) {
+        whenDragMinScore = min
     }
 
     private fun refreshReviewScore() {
@@ -213,7 +249,7 @@ class ReviewBar : LinearLayoutCompat {
                 val dragOnView = x - child.left
                 val ratioCross = i + (dragOnView / child.width.toFloat())
 
-                setReviewScore(ratioCross)
+                setReviewScore(ratioCross, true)
             }
         }
     }
