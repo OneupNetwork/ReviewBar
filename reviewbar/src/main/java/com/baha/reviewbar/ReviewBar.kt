@@ -111,7 +111,7 @@ class ReviewBar : LinearLayoutCompat {
         imageView.setImageDrawable(drawable)
     }
 
-    fun setReviewIcon(fillIconRes:Int,halfIconRes:Int,emptyIconRes:Int){
+    fun setReviewIcon(fillIconRes: Int, halfIconRes: Int, emptyIconRes: Int) {
         removeAllViews()
         reviewIconMap.apply {
             put(ReviewIcon.FILL, ContextCompat.getDrawable(context, fillIconRes)!!)
@@ -130,7 +130,7 @@ class ReviewBar : LinearLayoutCompat {
         refreshReviewScore()
     }
 
-    fun setReviewScoreMax(max:Int){
+    fun setReviewScoreMax(max: Int) {
         reviewScoreMax = max
         removeAllViews()
         initView()
@@ -151,6 +151,10 @@ class ReviewBar : LinearLayoutCompat {
 
     fun setWhenDragScoreMin(min: Float) {
         whenDragMinScore = min
+    }
+
+    fun getReviewScore():Float{
+        return reviewScore
     }
 
     private fun refreshReviewScore() {
@@ -246,8 +250,13 @@ class ReviewBar : LinearLayoutCompat {
 
             if (x > child.left && x < (child.left + child.width)) {
 
-                val dragOnView = x - child.left
-                val ratioCross = i + (dragOnView / child.width.toFloat())
+                val ratioCross = if (halfEnable) {
+                    val dragOnView = x - child.left
+                    i + (dragOnView / child.width.toFloat())
+                }
+                else {
+                    (i + 1).toFloat()
+                }
 
                 setReviewScore(ratioCross, true)
             }
