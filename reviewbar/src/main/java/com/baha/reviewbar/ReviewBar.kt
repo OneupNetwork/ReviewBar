@@ -34,6 +34,7 @@ class ReviewBar : LinearLayoutCompat {
     private var touchDownX = 0f
     private var isDragging = false
     private var whenDragMinScore = 0f
+    private var listener:IReviewBarListener? = null
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -111,6 +112,10 @@ class ReviewBar : LinearLayoutCompat {
         imageView.setImageDrawable(drawable)
     }
 
+    fun setListener(listener: IReviewBarListener){
+        this.listener = listener
+    }
+
     fun setReviewIcon(fillIconRes: Int, halfIconRes: Int, emptyIconRes: Int) {
         removeAllViews()
         reviewIconMap.apply {
@@ -127,6 +132,7 @@ class ReviewBar : LinearLayoutCompat {
         }
 
         this.reviewScore = score
+        listener?.scoreChange(score)
         refreshReviewScore()
     }
 

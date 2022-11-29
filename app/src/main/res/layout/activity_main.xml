@@ -9,11 +9,21 @@
         android:id="@+id/reviewBarOne"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
+        app:halfEnable="false"
+        app:layout_constraintBottom_toTopOf="@id/score"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:whenDragScoreMin="1.0"/>
 
-        app:whenDragScoreMin="1.0"
-        app:halfEnable="false"
-        />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="46dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reviewBarOne"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
