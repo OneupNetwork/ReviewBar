@@ -72,7 +72,7 @@ artifacts {
 }
 
 group = 'tw.com.oneup.www'
-version '1.0.2'
+version '1.0.3'
 
 afterEvaluate {
     publishing {
@@ -137,11 +137,4 @@ afterEvaluate {
     signing {
         sign publishing.publications
     }
-}
-nexusStaging {
-    packageGroup = 'tw.com.oneup.www'
-    def name = findProperty('nexusUsername') ?: ''
-    def pw = findProperty('nexusPassword') ?: ''
-    username = name
-    password = pw
 }
